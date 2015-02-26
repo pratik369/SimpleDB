@@ -1,6 +1,5 @@
 package com.company;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -9,6 +8,8 @@ public class Main {
 
     private static HashMap<Integer, HashMap<String,String>> db = new HashMap<Integer, HashMap<String,String>>();
     private static int transaction = 0;
+    private static boolean flag = true;
+    private static boolean change = false;
     public static void main(String[] args) {
 
         Scanner myScanner = new Scanner(System.in);
@@ -32,6 +33,8 @@ public class Main {
                 unset(arguments[1]);
             if(arguments[0].equalsIgnoreCase("numequalto"))
                 numEqualto(arguments[1]);
+            if(arguments[0].equalsIgnoreCase("begin"))
+                begin();
         }
     }
 
@@ -55,6 +58,8 @@ public class Main {
     }
 
     private static void set(String var, String value){
+        if(transaction == -1)
+            transaction = 0;
         System.out.println("Transaction ID =" + transaction);
         if(db.containsKey(transaction)){
             HashMap<String,String> map3 = new HashMap<String, String>();
@@ -66,7 +71,7 @@ public class Main {
                 map3.put(var, value);
                 db.put(transaction, map3);
             }
-
+            change = true;
             for(Map.Entry<String,String> entry : map3.entrySet()){
                 System.out.println(entry.getKey());
                 System.out.println(entry.getValue());
@@ -82,8 +87,8 @@ public class Main {
     }
 
     private static void rollback(){
-        if(db.isEmpty())
-            System.out.println("Nothing there to RollBack");
+        if(db.isEmpty() || change == false)
+            System.out.println("No Transaction");
         else {
             System.out.println("db size = "+db.size());
             System.out.println("Transaction removed");
@@ -95,9 +100,18 @@ public class Main {
 
     }
 
+    private static void begin(){
+        if(flag){
+            flag=false;
+            return;
+        }else
+            commit();
+
+    }
+
     private static void commit(){
         if(db.isEmpty())
-            System.out.println("Nothing to Commit");
+            System.out.println("No Transaction");
         else{
             HashMap<String,String> map,newmap = new HashMap<String, String>();
             map = db.get(transaction);
@@ -106,6 +120,7 @@ public class Main {
             }
             transaction++;
             db.put(transaction,newmap);
+            change = false;
         }
 
 
@@ -118,7 +133,8 @@ public class Main {
         else{
             HashMap<String,String> unset = db.get(transaction);
             if(unset.containsKey(var)){
-            unset.remove(var);
+                unset.remove(var);
+                change = true;
             }
             else
                 System.out.println("Null");
