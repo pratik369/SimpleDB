@@ -16,7 +16,7 @@ public class Main {
         System.out.println("Enter the Database Query");
         while(true) {
             String query = myScanner.nextLine();
-            System.out.println(query);
+            //System.out.println(query);
             String []arguments = query.split(" ");
 
             if(arguments[0].equalsIgnoreCase("end"))
@@ -39,10 +39,10 @@ public class Main {
     }
 
 
-
+    // Function used to get the value of the variable..performed in O(1) time..
 
     private static void get(String var){
-        System.out.println((transaction));
+
         if(db.containsKey(transaction)){
             HashMap<String,String> map = db.get(transaction);
             if(map.containsKey(var)){
@@ -57,10 +57,14 @@ public class Main {
 
     }
 
+
+    //function used to set value of the variable...performed in O(1) time.
+
     private static void set(String var, String value){
+
         if(transaction == -1)
             transaction = 0;
-        System.out.println("Transaction ID =" + transaction);
+
         if(db.containsKey(transaction)){
             HashMap<String,String> map3 = new HashMap<String, String>();
             map3 = db.get(transaction);
@@ -72,10 +76,6 @@ public class Main {
                 db.put(transaction, map3);
             }
             change = true;
-            for(Map.Entry<String,String> entry : map3.entrySet()){
-                System.out.println(entry.getKey());
-                System.out.println(entry.getValue());
-            }
         }
         else {
             HashMap<String,String> map1= new HashMap<String, String>();
@@ -86,19 +86,19 @@ public class Main {
 
     }
 
+    //Rollback function
+
     private static void rollback(){
         if(db.isEmpty() || change == false)
             System.out.println("No Transaction");
         else {
-            System.out.println("db size = "+db.size());
-            System.out.println("Transaction removed");
             db.remove(transaction);
-            System.out.println(transaction);
             transaction--;
-            System.out.println("db size = "+db.size());
         }
 
     }
+
+    //Transaction beginning
 
     private static void begin(){
         if(flag){
@@ -109,6 +109,7 @@ public class Main {
 
     }
 
+    //Commit
     private static void commit(){
         if(db.isEmpty())
             System.out.println("No Transaction");
@@ -127,6 +128,8 @@ public class Main {
 
     }
 
+    //Unset the value of the variable..performed in O(1) time..
+
     private static void unset(String var){
         if(db.isEmpty())
             System.out.println("Null");
@@ -142,13 +145,17 @@ public class Main {
 
     }
 
+    //numequalto function..performed in O(n) time..
+
     private static void numEqualto(String value){
         if(db.isEmpty())
             System.out.println("0");
         else{
+
             HashMap<String,String> numequal = new HashMap<String, String>();
             numequal = db.get(transaction);
             int count = 0;
+
             for(Map.Entry<String,String> entry : numequal.entrySet()){
                 if(value.equalsIgnoreCase(entry.getValue()))
                     count++;
@@ -160,6 +167,8 @@ public class Main {
         }
 
     }
+
+    //end function
     private static void end(){
         System.exit(0);
     }
